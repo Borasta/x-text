@@ -1,0 +1,110 @@
+<script>
+    (function() {
+        var prototype = Object.create( HTMLInputElement.prototype );
+        
+        prototype.createdCallback = function() {
+            var input = this;
+            input.regExp;
+            
+            // Attr of wc
+            input.old = input.value;
+            input.type = "text";
+            input.regExp = evalPattern( input.pattern );
+            input.chekVal = input.regExp.test( input.value ) ? true : false;
+                        
+            var validation = function() {
+                input.chekVal = input.regExp.test( input.value );
+                if( input.dataset.strict === "true" ) {
+                    if( !input.chekVal )
+                        input.value = input.old;
+                    else
+                        input.old = input.value;
+                }
+                else {
+                    if( input.chekVal )
+                        eval(input.dataset.valid);
+                    else
+                        eval(input.dataset.invalid);
+                }
+            }
+            
+            input.setValid = function( func ) {
+                input.dataset.valid = func;
+            }
+            
+            input.setInvalid = function( func ) {
+                input.dataset.invalid = func;
+            }
+            
+            if( input.value !== "" )
+                validation();
+                        
+            input.addEventListener("input", validation);
+        }
+        
+        prototype.attributeChangedCallback = function( attr, oldAttr, newAttr ) {
+            var input = this;
+            switch( attr ) {                
+                case "pattern":
+                    input.regExp = evalPattern( input.pattern );
+                    break;
+            }
+        }
+        
+        var evalPattern = function( reg ) {
+            var exp;
+            switch( reg.toUpperCase() ) {
+                // Accept void character    
+                case "UPPERCASEN":
+                    exp = "^[A-Z]*$";
+                    break;
+
+                case "LOWERCASEN":
+                    exp = "^[a-z]*$";
+                    break;
+
+                case "ALPHAN":
+                    exp = "^[a-zA-Z]*$";
+                    break;
+
+                case "NUMERICN":
+                    exp = "^[0-9]*$";
+                    break;
+
+                case "ALNUMN":
+                    exp = "^[a-zA-Z0-9]*$";
+                    break;
+                    
+                // No accept void character
+                case "UPPERCASE":
+                    exp = "^[A-Z]+$";
+                    break;
+
+                case "LOWERCASE":
+                    exp = "^[a-z]+$";
+                    break;
+
+                case "ALPHA":
+                    exp = "^[a-zA-Z]+$";
+                    break;
+
+                case "NUMERIC":
+                    exp = "^[0-9]+$";
+                    break;
+
+                case "ALNUM":
+                    exp = "^[a-zA-Z0-9]+$";
+                    break;
+                    
+                default:
+                    exp = reg;
+            }
+            return new RegExp( exp );
+        }
+        
+        document.registerElement("x-text", {
+            prototype: prototype,
+            extends: "input"
+        });
+    })();
+</script>
