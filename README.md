@@ -2,7 +2,7 @@
 Web component x-text
 
 import tag
-<code><link rel="import" href="http://input.comli.com/x-text.html/></code>
+<code><link rel="import" href="http://input.comli.com/x-text.html"/></code>
 
 Example for use http://codepen.io/Borasta/pen/dGGqRR
 
